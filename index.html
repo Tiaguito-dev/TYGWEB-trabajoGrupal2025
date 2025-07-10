@@ -1,18 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Conexión js -->
-    <script src="./main.js"></script>
-    <!-- Conexión css -->
-    <link rel="stylesheet" href="./styles.css">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <title>TP2 - Series Populares</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
+  <header>
+    <h1>TP Nro 2 - G33</h1>
+  </header>
 
+  <div class="container">
+    <div class="panel">
+      <h2>Operaciones</h2>
+      <div class="controls">
+        <button onclick="cargarDatos()">Cargar datos de APIs</button>
+        <button onclick="verDatos()">Visualizar datos</button>
+        <button onclick="limpiarDatos()">Limpiar</button>
+      </div>
+      <div id="series-container" class="series-list">
+        <p class="no-data">Presione "Cargar datos" para comenzar</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Información Técnica</h2>
+      <div id="info-container">
+        <p>Este sistema consume datos de:</p>
+        <ul>
+          <li>API de The Movie DB (TMDB)</li>
+          <li>Strapi CMS institucional</li>
+        </ul>
+        <div id="stats-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    TygWeb 2025
+  </footer>
+
+  <script src="script.js"></script>
 </body>
-
 </html>
