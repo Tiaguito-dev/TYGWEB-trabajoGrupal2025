@@ -3,10 +3,10 @@ const API_KEY = 'f9b1a141378864e8ccd44b63053a1ba8';
 const STRAPI_URL = 'https://gestionweb.frlp.utn.edu.ar/api/g33-series';
 let jwtToken = '';
 
-// 1. Función principal para cargar datos
+// Función principal para cargar datos
 async function cargarDatos() {
   try {
-    // Obtener datos de TMDB
+    // Consumir la API
     const [seriesData, genresData] = await Promise.all([
       fetch(`https://api.themoviedb.org/3/tv/popular?api_key=${API_KEY}`).then(r => r.json()),
       fetch(`https://api.themoviedb.org/3/genre/tv/list?api_key=${API_KEY}`).then(r => r.json())
@@ -27,7 +27,7 @@ async function cargarDatos() {
     }));
 
     mostrarSeries(seriesProcesadas);
-    
+
     try {
       await guardarEnStrapi(seriesProcesadas);
       actualizarEstadisticas('Datos guardados en Strapi correctamente');
@@ -46,7 +46,7 @@ async function cargarDatos() {
 async function verDatos() {
   try {
     let series = [];
-    
+
     // Intentar cargar desde Strapi
     const response = await fetch(STRAPI_URL, {
       headers: jwtToken ? { 'Authorization': `Bearer ${jwtToken}` } : {}
@@ -71,7 +71,7 @@ async function verDatos() {
     if (series.length > 0) {
       mostrarSeries(series);
     } else {
-      document.getElementById('series-container').innerHTML = 
+      document.getElementById('series-container').innerHTML =
         '<p class="no-data">No hay datos almacenados. Use "Cargar datos" primero.</p>';
     }
   } catch (error) {
@@ -119,7 +119,7 @@ function cargarDesdeLocal() {
 // 5. Función para mostrar series
 function mostrarSeries(series) {
   const container = document.getElementById('series-container');
-  
+
   if (!series || series.length === 0) {
     container.innerHTML = '<p class="no-data">No hay datos para mostrar</p>';
     return;
@@ -153,7 +153,7 @@ function actualizarEstadisticas(mensaje) {
 // 7. Función para limpiar
 function limpiarDatos() {
   if (confirm('¿Borrar todos los datos mostrados?')) {
-    document.getElementById('series-container').innerHTML = 
+    document.getElementById('series-container').innerHTML =
       '<p class="no-data">Datos limpiados. Use "Visualizar datos" para recuperar.</p>';
   }
 }
