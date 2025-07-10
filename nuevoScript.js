@@ -1,7 +1,7 @@
 // === DECLARACIÓN DE LAS APIs ===
 const API_KEY = 'f9b1a141378864e8ccd44b63053a1ba8';
 const STRAPI_URL = 'https://gestionweb.frlp.utn.edu.ar/api/g33-series';
-let jwtToken = '';
+let jwtToken = '099da4cc6cbb36bf7af8de6f1f241f8c81e49fce15709c4cfcae1313090fa2c1ac8703b0179863b4eb2739ea65ae435e90999adb870d49f9f94dcadd88999763119edca01a6b34c25be92a80ed30db1bcacb20df40e4e7f45542bd501f059201ad578c18a11e4f5cd592cb25d6c31a054409caa99f11b6d2391440e9c72611ea';
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -10,21 +10,21 @@ document.addEventListener("DOMContentLoaded", function () {
     let botonLimpiar = document.getElementById("boton-limpiar-pantalla");
 
     botonCargar.addEventListener("click", function (event) {
-        limpiarPantalla(2);
+        estado_display = limpiarPantalla(2);
+        botonLimpiar.style.display = estado_display;
         cargarDatos();
-        botonLimpiar.style.display = "block";
     });
 
     botonVisualizar.addEventListener("click", function () {
-        limpiarPantalla(2);
+        estado_display = limpiarPantalla(2);
+        botonLimpiar.style.display = estado_display;
         visualizarDatos();
-        botonLimpiar.style.display = "block";
     });
 
     botonLimpiar.addEventListener("click", function () {
-        limpiarPantalla(1);
+        estado_display = limpiarPantalla(1);
         // Limpio y hago desaparecer el botón
-        botonLimpiar.style.display = "none";
+        botonLimpiar.style.display = estado_display;
     });
 
 });
@@ -39,8 +39,10 @@ async function cargarDatos() {
     try {
         // 1. Proceso las series
         let series = await procesarSeries()
+
         // 2. Muestro las series en pantalla
         mostrarSeries(series) // No le pongo await porque no consumo una api (no retorna promise)
+
         // flag
         console.log("Las series más populares PROCESADAS son: ", series)
 
@@ -49,6 +51,7 @@ async function cargarDatos() {
     } catch (error) {
         console.error('ERROR! (cargarDatos):', error);
     }
+
 };
 
 // Limpiar pantalla
@@ -59,7 +62,10 @@ function limpiarPantalla(op) {
         if (confirm('¿Borrar todos los datos mostrados?')) {
             document.getElementById('series-container').innerHTML =
                 '<p class="no-data">Datos limpiados. Use "Visualizar datos" para recuperar.</p>';
+            return "none"
         }
+        // Mantiene el botón visible porque el usuario apretó cancelar
+        return "block"
     }
 
     // Opción 2: limpieza del contenedor sin nada más
@@ -71,6 +77,8 @@ function limpiarPantalla(op) {
         while (contenedor.firstChild) {
             contenedor.removeChild(contenedor.firstChild);
         }
+        // Cambia el estado del display a block
+        return "block"
     }
 }
 
@@ -102,7 +110,7 @@ async function procesarSeries() {
         series = series.map(serie => ({
             titulo: serie.name,
             // Acá se transforman los id de género en sus nombres usando el Map, si no lo encuentra le asigna "Desconocido"
-            generos: serie.genre_ids.map(id => generos.get(id) || 'Desconocido'),
+            generos: (serie.genre_ids.map(id => generos.get(id) || 'Desconocido')).join(", "),
             imagen: `https://image.tmdb.org/t/p/w200${serie.poster_path}`,
             popularidad: serie.popularity
         }));
@@ -142,7 +150,7 @@ function generarTarjeta(serie) {
     titulo.textContent = serie.titulo
     // Usamos el método de arrays .join() pque convierte todos sus elementos en una sola cadena de texto
     // TODO se le puede poner una clase al stron Generos para ponerle otra letra o algo
-    generos.innerHTML = `<p><strong>Generos:</strong> ${serie.generos.join(", ")}<p>`
+    generos.innerHTML = `<p><strong>Generos:</strong> ${serie.generos}<p>`
     popularidad.innerHTML = `<p><strong>Popularidad:</strong> ${serie.popularidad}<p>`
     imagen.src = serie.imagen
     imagen.alt = serie.titulo
@@ -161,29 +169,61 @@ function generarTarjeta(serie) {
 // TODO (falta depurar porque literalmente copié y pegué)
 // TODO Falta saber si en verdad guarda algo en el strapi
 async function guardarEnStrapi(series) {
+    console.log("ESTOY EN GUARDAR")
+
+    /*
+    const nuevaSerie = {
+        titulo: series[0].titulo,
+        generos: series[0].generos.join(", "),
+        imagen: series[0].imagen,
+        popularidad: toString(series[0].popularidad)
+        console.log("Enviando a Strapi:", nuevaSerie);
+    };
+    */
+
     try {
-        // DEPURAR A PARTIR DE ACÁ
-        for (const serie of series) {
-            const response = await fetch(STRAPI_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(jwtToken && { 'Authorization': `Bearer ${jwtToken}` })
-                },
-                body: JSON.stringify({
-                    data: {
-                        titulo: serie.titulo,
-                        generos: serie.generos,
-                        imagen: serie.imagen,
-                        popularidad: serie.popularidad
-                    }
-                })
-            });
-            if (!response.ok) {
-                throw new Error(`Error HTTP ${response.status}`);
+        const response = await axios.post(STRAPI_URL, {
+            data: series[2]
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                ...(jwtToken && { 'Authorization': `Bearer ${jwtToken}` })
             }
-        }
+        });
+
+        console.log('Serie guardada:', response.data);
     } catch (error) {
-        console.error('ERROR! (procesarDatos):', error);
+        console.error('Error al guardar en Strapi:', error.response?.data || error.message);
     }
 }
+
+
+
+
+/*
+
+const STRAPI_URL = 'https://gestionweb.frlp.utn.edu.ar/api/g33-series';
+const TOKEN = '099da4cc6cbb36bf7af8de6f1f241f8c81e49fce15709c4cfcae1313090fa2c1ac8703b0179863b4eb2739ea65ae435e90999adb870d49f9f94dcadd88999763119edca01a6b34c25be92a80ed30db1bcacb20df40e4e7f45542bd501f059201ad578c18a11e4f5cd592cb25d6c31a054409caa99f11b6d2391440e9c72611ea'; 
+
+fetch(STRAPI_URL, {
+    method: 'GET',
+    headers: {
+        'Authorization': `Bearer ${TOKEN}`,
+        'Content-Type': 'application/json',
+    },
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Error en la solicitud: ' + response.status);
+    }
+    return response.json();
+})
+.then(data => {
+    console.log('Datos recibidos:', data);
+})
+.catch(error => {
+    console.error('Error al hacer la solicitud:', error.message);
+});
+*/
+
+
