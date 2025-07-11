@@ -3,7 +3,6 @@ const API_KEY = 'f9b1a141378864e8ccd44b63053a1ba8';
 const STRAPI_URL = 'https://gestionweb.frlp.utn.edu.ar/api/g33-series';
 let jwtToken = '099da4cc6cbb36bf7af8de6f1f241f8c81e49fce15709c4cfcae1313090fa2c1ac8703b0179863b4eb2739ea65ae435e90999adb870d49f9f94dcadd88999763119edca01a6b34c25be92a80ed30db1bcacb20df40e4e7f45542bd501f059201ad578c18a11e4f5cd592cb25d6c31a054409caa99f11b6d2391440e9c72611ea';
 
-
 document.addEventListener("DOMContentLoaded", function () {
     let botonCargar = document.getElementById("boton-cargar-datos");
     let botonLimpiar = document.getElementById("boton-limpiar-pantalla");
@@ -178,33 +177,33 @@ function generarTarjeta(serie) {
 // TODO Falta saber si en verdad guarda algo en el strapi
 async function guardarEnStrapi(series) {
     // flag
-    console.log("ESTOY EN GUARDAR, se va a guardar: ", series[3])
+    console.log("ESTOY EN GUARDAR, se van a guardar: ", series)
 
     // esto era código de prueba
     /*
     const nuevaSerie = {
         titulo: series[0].titulo,
-        generos: series[0].generos.join(", "),
+        generos: series[0].generos,
         imagen: series[0].imagen,
         popularidad: toString(series[0].popularidad)
-        console.log("Enviando a Strapi:", nuevaSerie);
     };
     */
 
-
     try {
-        const response = await axios.post(STRAPI_URL, {
-            data: series[3]
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                ...(jwtToken && { 'Authorization': `Bearer ${jwtToken}` })
-            }
-        });
+        for (let i=0; i<series.length; i++){
 
-        // flag
-        console.log('Serie guardada:', response.data);
-
+            const response = await axios.post(STRAPI_URL, {
+                data: series[i]
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(jwtToken && { 'Authorization': `Bearer ${jwtToken}` })
+                }
+            });
+    
+            // flag
+            console.log(`Serie numero ${i+1} guardada: `, response.data);
+        }
         // Devuelvo true para indicar que está todo bien
         return true
     } catch (error) {
@@ -252,5 +251,3 @@ fetch(STRAPI_URL, {
     console.error('Error al hacer la solicitud:', error.message);
 });
 */
-
-
