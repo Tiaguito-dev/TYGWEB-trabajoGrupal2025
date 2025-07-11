@@ -6,21 +6,16 @@ let jwtToken = '099da4cc6cbb36bf7af8de6f1f241f8c81e49fce15709c4cfcae1313090fa2c1
 
 document.addEventListener("DOMContentLoaded", function () {
     let botonCargar = document.getElementById("boton-cargar-datos");
-    let botonVisualizar = document.getElementById("boton-visualizar-datos");
     let botonLimpiar = document.getElementById("boton-limpiar-pantalla");
 
+    // Cargar datos de la api y guardarlo en el strapi
     botonCargar.addEventListener("click", function (event) {
         estado_display = limpiarPantalla(2);
         botonLimpiar.style.display = estado_display;
         cargarDatos();
     });
 
-    botonVisualizar.addEventListener("click", function () {
-        estado_display = limpiarPantalla(2);
-        botonLimpiar.style.display = estado_display;
-        visualizarDatos();
-    });
-
+    // Limpiar la pantalla
     botonLimpiar.addEventListener("click", function () {
         estado_display = limpiarPantalla(1);
         // Limpio y hago desaparecer el botón
@@ -47,8 +42,13 @@ async function cargarDatos() {
         console.log("Las series más populares PROCESADAS son: ", series)
 
         // 3. Lo guardo en el strapi
-        await guardarEnStrapi(series);
+        if(await guardarEnStrapi(series)){
+            alert("Datos enviados al strapi correctamente");
+        } else {
+            alert("Error al enviar datos al strapi")
+        }
     } catch (error) {
+        alert("Nacho tenía razon");
         console.error('ERROR! (cargarDatos):', error);
     }
 
@@ -61,7 +61,7 @@ function limpiarPantalla(op) {
     if (op == 1) {
         if (confirm('¿Borrar todos los datos mostrados?')) {
             document.getElementById('series-container').innerHTML =
-                '<p class="no-data">Datos limpiados. Use "Visualizar datos" para recuperar.</p>';
+                '<p class="no-data"> Seleccione "Cargar datos" para recuperar</p>';
             return "none"
         }
         // Mantiene el botón visible porque el usuario apretó cancelar
@@ -126,6 +126,10 @@ function mostrarSeries(series) {
     series.forEach(serie => console.log(serie))
 
     let contenedor = document.getElementById("series-container")
+    let titulo = document.createElement("h2")
+    titulo.innerHTML = "Series más populares"
+    titulo.style = "margin: 20px"
+    contenedor.appendChild(titulo)
 
     let i = 0
     series.forEach((serie, i) => {
@@ -141,6 +145,7 @@ function mostrarSeries(series) {
 function generarTarjeta(serie) {
     // Creamos las estructuras
     let tarjeta = document.createElement("div")
+    let divisor = document.createElement("div")
     let titulo = document.createElement("h3")
     let generos = document.createElement("span")
     let popularidad = document.createElement("span")
@@ -155,10 +160,13 @@ function generarTarjeta(serie) {
     imagen.src = serie.imagen
     imagen.alt = serie.titulo
 
+    //Esto es un divisor que después le voy a aplicar estilos
+    divisor.appendChild(titulo)
+    divisor.appendChild(generos)
+    divisor.appendChild(popularidad)
+
     // Encolo los elementos a la tarjeta
-    tarjeta.appendChild(titulo)
-    tarjeta.appendChild(generos)
-    tarjeta.appendChild(popularidad)
+    tarjeta.appendChild(divisor)
     tarjeta.appendChild(imagen)
     tarjeta.className = "serie"
 
@@ -169,8 +177,10 @@ function generarTarjeta(serie) {
 // TODO (falta depurar porque literalmente copié y pegué)
 // TODO Falta saber si en verdad guarda algo en el strapi
 async function guardarEnStrapi(series) {
+    // flag
     console.log("ESTOY EN GUARDAR, se va a guardar: ", series[3])
 
+    // esto era código de prueba
     /*
     const nuevaSerie = {
         titulo: series[0].titulo,
@@ -180,6 +190,7 @@ async function guardarEnStrapi(series) {
         console.log("Enviando a Strapi:", nuevaSerie);
     };
     */
+
 
     try {
         const response = await axios.post(STRAPI_URL, {
@@ -191,9 +202,14 @@ async function guardarEnStrapi(series) {
             }
         });
 
+        // flag
         console.log('Serie guardada:', response.data);
+
+        // Devuelvo true para indicar que está todo bien
+        return true
     } catch (error) {
         console.error('Error al guardar en Strapi:', error.response?.data || error.message);
+        return false
     }
 }
 
