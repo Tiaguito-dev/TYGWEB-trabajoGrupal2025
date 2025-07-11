@@ -169,7 +169,7 @@ function generarTarjeta(serie) {
 // TODO (falta depurar porque literalmente copié y pegué)
 // TODO Falta saber si en verdad guarda algo en el strapi
 async function guardarEnStrapi(series) {
-    console.log("ESTOY EN GUARDAR")
+    console.log("ESTOY EN GUARDAR, se va a guardar: ", series[3])
 
     /*
     const nuevaSerie = {
@@ -183,7 +183,7 @@ async function guardarEnStrapi(series) {
 
     try {
         const response = await axios.post(STRAPI_URL, {
-            data: series[2]
+            data: series[3]
         }, {
             headers: {
                 'Content-Type': 'application/json',
@@ -201,7 +201,18 @@ async function guardarEnStrapi(series) {
 
 
 /*
+Ambos métodos (axios y fetch) usan el protocolo HTTP y permiten hacer GET, POST, PUT, etc.
+No hay diferencia en lo que pueden hacer, pero sí hay diferencia en cómo lo hacen y cuánto trabajo te ahorran.
 
+AXIOS:
+    - Serializa automáticamente el cuerpo del POST como JSON.
+    - Agrega correctamente los headers cuando hacés .post(url, data, config).
+    - Maneja errores de forma más informativa (try/catch con error.response).
+    - Soporta interceptores, cancelaciones, manejo de tiempo de espera, etc.
+*/ 
+
+// Esto sería el get sin el axios, pero no funcionó
+/*
 const STRAPI_URL = 'https://gestionweb.frlp.utn.edu.ar/api/g33-series';
 const TOKEN = '099da4cc6cbb36bf7af8de6f1f241f8c81e49fce15709c4cfcae1313090fa2c1ac8703b0179863b4eb2739ea65ae435e90999adb870d49f9f94dcadd88999763119edca01a6b34c25be92a80ed30db1bcacb20df40e4e7f45542bd501f059201ad578c18a11e4f5cd592cb25d6c31a054409caa99f11b6d2391440e9c72611ea'; 
 
