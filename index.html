@@ -1,48 +1,40 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>TP2 - Series Populares</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Enlace al script -->
+    <script src="./nuevoScript.js"></script>
+    <!-- Enlace a los estilos -->
+    <link rel="stylesheet" href="./nuevoStyles.css">
+    <!-- Enlace fuentes de letras -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <!-- Enlace axios -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <title>GRUPO 33 - NUEVO</title>
 </head>
 
 <body>
     <header>
-        <h1>TP Nro 2 - G33</h1>
+        <h1>TRABAJO PRÁCTICO GRUPAL - TYG WEB</h1>
     </header>
-
-    <div class="container">
-        <div class="panel">
-            <h2>Operaciones</h2>
-            <div class="controls">
-                <button onclick="cargarDatos()">Cargar datos de APIs</button>
-                <button onclick="verDatos()">Visualizar datos</button>
-                <button onclick="limpiarDatos()">Limpiar</button>
-            </div>
-            <div id="series-container" class="series-list">
-                <p class="no-data">Presione "Cargar datos" para comenzar</p>
-            </div>
+    <div id="secciones-principales">
+        <div id="botonera">
+            <button id="boton-cargar-datos">Cargar datos de APIs</button>
+            <button id="boton-limpiar-pantalla" style="display:none">Limpiar pantalla</button>
         </div>
-
-        <div class="panel">
-            <h2>Información Técnica</h2>
-            <div id="info-container">
-                <p>Este sistema consume datos de:</p>
-                <ul>
-                    <li>API de The Movie DB (TMDB)</li>
-                    <li>Strapi CMS institucional</li>
-                </ul>
-                <div id="stats-container"></div>
-            </div>
-        </div>
+        <section id="series-container">
+            <p class="no-data">Seleccione "Cargar datos" para comenzar</p>
+        </section>
     </div>
-
     <footer>
-        TygWeb 2025
+        <div>
+            <h2> Grupo 33: Muggeti Emanuel, Sanchez Mariano, Williams Ignacio, Solis Tiago </h2>
+        </div>
     </footer>
-
-    <script src="script.js"></script>
 </body>
 
 </html>
